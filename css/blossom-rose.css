@@ -1,0 +1,14 @@
+/* Version 17: cherry blossom corners and rose cursor */
+.blossom-corner{position:fixed;z-index:8;pointer-events:none;color:#f4b7ad;text-shadow:0 0 16px rgba(239,132,126,.55);filter:drop-shadow(0 5px 10px rgba(36,16,14,.2))}
+.blossom-corner span{position:absolute;display:block;font-family:Georgia,serif;line-height:1;animation:petalFloat 5s ease-in-out infinite}
+.blossom-corner-left{left:12px;top:18%;width:110px;height:220px;transform:rotate(-18deg)}
+.blossom-corner-left span:nth-child(1){font-size:44px;left:0;top:0}.blossom-corner-left span:nth-child(2){font-size:28px;left:56px;top:86px;animation-delay:-2s}.blossom-corner-left span:nth-child(3){font-size:20px;left:20px;top:158px;animation-delay:-3.5s}
+.blossom-corner-right{right:8px;bottom:12%;width:120px;height:210px;transform:rotate(24deg)}
+.blossom-corner-right span:nth-child(1){font-size:40px;right:10px;top:0}.blossom-corner-right span:nth-child(2){font-size:27px;right:67px;top:92px;animation-delay:-1.3s}.blossom-corner-right span:nth-child(3){font-size:19px;right:22px;top:162px;animation-delay:-4s}
+.rose-cursor{position:fixed;z-index:400;left:0;top:0;width:64px;height:64px;border:1px solid rgba(255,194,185,.72);border-radius:50%;display:grid;place-items:center;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.6) rotate(-15deg);transition:opacity .2s,transform .28s cubic-bezier(.2,.75,.18,1);background:rgba(91,34,37,.25);backdrop-filter:blur(3px);mix-blend-mode:screen}
+.rose-cursor span{font-family:Georgia,serif;font-size:28px;color:#ffc4bb;text-shadow:0 0 12px rgba(255,160,150,.9);animation:roseSpin 6s linear infinite}.rose-cursor.is-visible{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}
+@keyframes petalFloat{0%,100%{transform:translate3d(0,0,0) rotate(0);opacity:.72}50%{transform:translate3d(5px,-12px,0) rotate(9deg);opacity:1}}
+@keyframes roseSpin{to{transform:rotate(360deg)}}
+@media(max-width:700px),(pointer:coarse){.blossom-corner{transform:scale(.65)}.blossom-corner-left{left:-16px;top:20%}.blossom-corner-right{right:-20px;bottom:10%}.rose-cursor{display:none}}
+@media(prefers-reduced-motion:reduce){.blossom-corner span,.rose-cursor span{animation:none}.rose-cursor{display:none}}
+

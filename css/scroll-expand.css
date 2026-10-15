@@ -1,0 +1,5 @@
+/* React Bits-inspired Scroll Expand, tuned for the Aurelle coastal image. */
+.intro-image-wrap.scroll-expand{--scroll-expansion:.92;--scroll-corner:18px;transform:scale(var(--scroll-expansion));transform-origin:center center;border-radius:var(--scroll-corner);overflow:hidden;will-change:transform}
+.intro-image-wrap.scroll-expand .image-index,.intro-image-wrap.scroll-expand .image-caption{transition:opacity .28s ease}
+@media(max-width:700px){.intro-image-wrap.scroll-expand{--scroll-expansion:.96;--scroll-corner:14px}}
+@media(prefers-reduced-motion:reduce){.intro-image-wrap.scroll-expand{transform:none!important;border-radius:0;will-change:auto}}

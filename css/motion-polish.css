@@ -1,0 +1,211 @@
+/* AURELLE motion polish: deliberate, short, compositor-friendly transitions. */
+:root {
+  --motion-ease: cubic-bezier(.2,.75,.18,1);
+  --motion-quick: 220ms;
+  --motion-standard: 620ms;
+}
+
+/* Current chapter indicator: a quiet brass line replaces a loud active pill. */
+.desktop-nav a.is-current::after {
+  width: 100%;
+  background: var(--brass);
+}
+.desktop-nav a.is-current {
+  text-decoration: none;
+}
+.site-header.is-scrolled .desktop-nav a.is-current::after {
+  background: var(--brass);
+}
+
+/* Section metadata gets a drawn line as it enters the reading viewport. */
+.section-meta {
+  position: relative;
+}
+.section-meta::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: clamp(34px, 6vw, 88px);
+  height: 2px;
+  background: var(--brass);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 760ms var(--motion-ease);
+}
+.section-meta.motion-drawn::after {
+  transform: scaleX(1);
+}
+
+/* A fine editorial underline draws beneath selected display phrases. */
+.display em {
+  position: relative;
+  display: inline-block;
+  padding-bottom: .035em;
+}
+.display em::after {
+  content: "";
+  position: absolute;
+  left: .015em;
+  right: .04em;
+  bottom: -.005em;
+  height: 1px;
+  background: currentColor;
+  opacity: .48;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 780ms var(--motion-ease) 120ms;
+}
+.display.reveal.is-in em::after {
+  transform: scaleX(1);
+}
+
+/* Image reveal: a very small scale settle, no expensive filter/clip-path animation. */
+.intro-image-wrap:not(.motion-entered) img,
+.suite-image-frame:not(.motion-entered) img,
+.ritual-card:not(.motion-entered) .ritual-photo img,
+.architecture-image:not(.motion-entered) img,
+.security-visual:not(.motion-entered) img {
+  transform: scale(1.055);
+}
+.intro-image-wrap.motion-entered img { transform: scale(1.03); }
+.intro-image-wrap.motion-entered:hover img { transform: scale(1); }
+.suite-image-frame.motion-entered img { transform: scale(1); }
+.suite-image-frame.motion-entered:hover img { transform: scale(1.025); }
+.ritual-card.motion-entered .ritual-photo img { transform: scale(1); }
+.ritual-card.motion-entered:hover .ritual-photo img { transform: scale(1.045); }
+.architecture-image.motion-entered img { transform: scale(1); }
+.architecture-image.motion-entered:hover img { transform: scale(1.03); }
+.security-visual.motion-entered:not(:hover) img { transform: scale(1.015); }
+.security-visual.motion-entered:hover img { transform: scale(1.055); }
+
+/* One restrained light pass when hovering a photograph on mouse-capable devices. */
+.intro-image-wrap::after,
+.suite-image-frame::after,
+.ritual-photo::after,
+.architecture-image::after,
+.security-visual::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -24%;
+  bottom: -24%;
+  left: 0;
+  width: 28%;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-165%, 0, 0) skewX(-16deg);
+  background: linear-gradient(90deg, transparent, rgba(244, 230, 202, .2), rgba(255, 248, 229, .32), transparent);
+  transition: transform 920ms var(--motion-ease), opacity 250ms ease;
+}
+.intro-image-wrap .image-index,
+.intro-image-wrap .image-caption,
+.suite-image-overlay,
+.ritual-photo > span,
+.architecture-image > span,
+.security-visual-label,
+.security-visual-caption,
+.security-image-index { z-index: 3; }
+.security-visual-shade { z-index: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .intro-image-wrap:hover::after,
+  .suite-image-frame:hover::after,
+  .ritual-photo:hover::after,
+  .architecture-image:hover::after,
+  .security-visual:hover::after {
+    opacity: .9;
+    transform: translate3d(460%, 0, 0) skewX(-16deg);
+  }
+}
+
+/* Small responsive movement gives cards a tactile quality without tilting the layout. */
+.essential-item .essential-icon svg {
+  transform-origin: center;
+  transition: transform 480ms var(--motion-ease), color 300ms ease;
+}
+.essential-item:hover .essential-icon svg,
+.essential-item:focus-within .essential-icon svg {
+  transform: translateY(-3px) rotate(-5deg);
+}
+.review-card::after {
+  transition: transform 650ms var(--motion-ease), border-color 450ms ease;
+}
+.review-card:hover::after,
+.review-card:focus-within::after {
+  transform: scale(1.18) translate(-3px, -2px);
+  border-color: rgba(173,137,92,.34);
+}
+.mood-choice i {
+  transition: opacity 250ms ease, transform 350ms var(--motion-ease), color 250ms ease;
+}
+.mood-choice.is-active i { transform: translate(3px, -2px); }
+
+/* Content swaps on the suite/mood selectors feel intentional rather than abrupt. */
+.motion-text-change {
+  animation: aurelleTextChange 510ms var(--motion-ease) both;
+}
+#stayMoodTimeline li {
+  animation: aurelleTimelineEnter 470ms var(--motion-ease) both;
+}
+#stayMoodTimeline li:nth-child(2) { animation-delay: 65ms; }
+#stayMoodTimeline li:nth-child(3) { animation-delay: 130ms; }
+@keyframes aurelleTextChange {
+  from { opacity: .35; transform: translate3d(0, 8px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes aurelleTimelineEnter {
+  from { opacity: 0; transform: translate3d(0, 7px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* Form state enters gently and keeps the layout movement limited. */
+.form-success:not([hidden]) {
+  animation: aurelleTextChange 480ms var(--motion-ease) both;
+}
+.submit-button span:last-child,
+.composer-use-plan span {
+  display: inline-block;
+  transition: transform 320ms var(--motion-ease);
+}
+.submit-button:hover span:last-child,
+.submit-button:focus-visible span:last-child {
+  transform: translate(3px, -3px);
+}
+
+/* The tiny status light breathes once every few seconds, never flashing rapidly. */
+.status i {
+  animation: aurelleStatusBreath 3.6s ease-in-out infinite;
+}
+@keyframes aurelleStatusBreath {
+  0%, 100% { opacity: .72; transform: scale(.92); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+/* Do not add animation cost when the visitor has requested reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .section-meta::after,
+  .display em::after,
+  .intro-image-wrap::after,
+  .suite-image-frame::after,
+  .ritual-photo::after,
+  .architecture-image::after,
+  .security-visual::after,
+  .essential-item .essential-icon svg,
+  .review-card::after,
+  .mood-choice i {
+    transition: none !important;
+    animation: none !important;
+  }
+  .intro-image-wrap img,
+  .suite-image-frame img,
+  .ritual-card .ritual-photo img,
+  .architecture-image img,
+  .security-visual img {
+    transform: none !important;
+  }
+  #stayMoodTimeline li,
+  .motion-text-change,
+  .form-success:not([hidden]),
+  .status i { animation: none !important; }
+}
+

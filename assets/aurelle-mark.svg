@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs><linearGradient id="brass" x1="9" y1="10" x2="56" y2="55" gradientUnits="userSpaceOnUse"><stop stop-color="#f1dfbd"/><stop offset="1" stop-color="#ad895c"/></linearGradient></defs>
+  <circle cx="32" cy="32" r="27.2" stroke="url(#brass)" stroke-width="1.2"/>
+  <path d="M15.5 42.5 32 13.4l16.5 29.1" stroke="url(#brass)" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M23.5 33.6h17" stroke="url(#brass)" stroke-width="1.2" stroke-linecap="round"/>
+  <circle cx="32" cy="25.6" r="3.3" fill="#d9bb8e"/>
+  <path d="M19 46.2c4.1-2.1 8.5-3.1 13-3.1s8.9 1 13 3.1M22 50c3.1-1.1 6.5-1.7 10-1.7s6.9.6 10 1.7" stroke="url(#brass)" stroke-width="1" stroke-linecap="round" opacity=".88"/>
+</svg>

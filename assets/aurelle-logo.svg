@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 88" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">AURELLE Coastal Retreat</title><desc id="desc">A quiet luxury coastal retreat wordmark with an A and rising sun emblem.</desc>
+  <defs><linearGradient id="brass" x1="9" y1="8" x2="66" y2="66" gradientUnits="userSpaceOnUse"><stop stop-color="#f1dfbd"/><stop offset="1" stop-color="#ad895c"/></linearGradient></defs>
+  <g transform="translate(4 9)"><circle cx="35" cy="35" r="31" stroke="url(#brass)" stroke-width="1.3"/><path d="M16 47 35 13l19 34M25 36h20" stroke="url(#brass)" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/><circle cx="35" cy="27" r="3.6" fill="#d9bb8e"/><path d="M20 51c4.8-2.4 9.8-3.6 15-3.6s10.2 1.2 15 3.6M23 56c3.7-1.4 7.7-2 12-2s8.3.6 12 2" stroke="url(#brass)" stroke-width="1" stroke-linecap="round"/></g>
+  <g fill="#ede9df"><text x="84" y="44" font-family="Georgia, 'Times New Roman', serif" font-size="29" letter-spacing="5.6">AURELLE</text><text x="86" y="65" font-family="Arial, sans-serif" font-size="9.4" letter-spacing="2.3" opacity=".72">COASTAL RETREAT</text></g>
+</svg>

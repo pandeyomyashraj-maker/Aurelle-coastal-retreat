@@ -1,0 +1,15 @@
+/* Version 18: Aurelle Concierge */
+.aurelle-assistant{position:fixed;z-index:700;right:26px;bottom:26px;width:min(340px,calc(100vw - 32px));font-family:var(--sans);color:#3b2328}
+.assistant-launcher{display:flex;align-items:center;gap:10px;margin-left:auto;padding:9px 13px 9px 9px;border:1px solid rgba(255,221,218,.8);border-radius:999px;background:linear-gradient(135deg,#f6aeb1,#e986a0);color:#fff;box-shadow:0 14px 34px rgba(118,32,65,.28);cursor:pointer;transition:transform .3s,box-shadow .3s}
+.assistant-launcher:hover,.assistant-launcher:focus-visible{transform:translateY(-4px) rotate(-1deg);box-shadow:0 20px 44px rgba(118,32,65,.36)}
+.assistant-bot-face{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:#ffd9df;box-shadow:inset 0 -5px 0 rgba(197,85,116,.18);position:relative}
+.assistant-bot-face:before{content:"";position:absolute;inset:9px 6px 10px;border-radius:9px;background:#643c65;box-shadow:0 2px 0 rgba(255,255,255,.2)}
+.assistant-bot-face i,.assistant-bot-face b{position:absolute;z-index:1;width:5px;height:5px;border-radius:50%;background:#fff0f7;top:19px}.assistant-bot-face i{left:14px}.assistant-bot-face b{right:14px}
+.assistant-label{font:9px var(--mono);letter-spacing:.1em;white-space:nowrap}.assistant-plus{font-size:23px;font-weight:300;line-height:1;margin-left:3px}
+.assistant-panel{position:absolute;right:0;bottom:72px;padding:17px;width:100%;border:1px solid rgba(255,220,220,.72);border-radius:22px;background:rgba(255,246,243,.96);box-shadow:0 20px 60px rgba(55,22,37,.26);backdrop-filter:blur(18px);animation:assistantIn .35s cubic-bezier(.2,.75,.18,1)}
+.assistant-panel[hidden]{display:none}.assistant-panel-top{display:flex;align-items:center;gap:7px;color:#8d4d61;font:8px var(--mono);letter-spacing:.1em}.assistant-panel-top button{margin-left:auto;border:0;background:none;color:#8d4d61;font-size:22px;line-height:1;cursor:pointer}.assistant-status-dot{width:7px;height:7px;border-radius:50%;background:#ef8299;box-shadow:0 0 0 4px rgba(239,130,153,.15)}
+.assistant-message{display:flex;gap:12px;align-items:flex-start;padding:18px 0 14px}.assistant-wave{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:12px;background:#ef9cac;color:white}.assistant-message strong{font-family:var(--serif);font-size:21px;font-weight:400;line-height:1.1}.assistant-message p{margin:7px 0 0;color:#765b61;font-size:11px;line-height:1.55}.assistant-actions{display:grid;gap:7px}.assistant-actions a{display:flex;justify-content:space-between;padding:10px 12px;border:1px solid rgba(141,77,97,.2);border-radius:10px;color:#713c51;font:9px var(--mono);letter-spacing:.05em;transition:background .25s,transform .25s}.assistant-actions a:hover{background:#ffe1e1;transform:translateX(3px)}
+@keyframes assistantIn{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:700px){.aurelle-assistant{right:16px;bottom:16px}.assistant-label{font-size:8px}.assistant-panel{bottom:68px}}
+@media(prefers-reduced-motion:reduce){.assistant-panel{animation:none}.assistant-launcher{transition:none}}
+

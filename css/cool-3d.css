@@ -1,0 +1,169 @@
+/* ============================================================
+   cool-3d.css — pointer-reactive 3D tilt cards + 3D scroll reveal
+   Isolated module: safe to remove by deleting this file + its
+   <link> tag + js/cool-3d.js + its <script> tag. Does not touch
+   any existing selector from style.css / motion-polish.css.
+   ============================================================ */
+
+/* ---- 1) Pointer-reactive 3D tilt (desktop / mouse devices only) ---- */
+@media (hover: hover) and (pointer: fine) {
+  .tilt-3d {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --tilt-shine: 50% 50%;
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(0);
+    transition: transform .5s cubic-bezier(.22,.7,.16,1), box-shadow .5s cubic-bezier(.22,.7,.16,1);
+    will-change: transform;
+    position: relative;
+  }
+  .tilt-3d.is-tilting {
+    transition: transform .08s linear;
+    box-shadow: 0 34px 70px -28px rgba(24,25,23,.42);
+  }
+  /* soft light sheen that follows the pointer, drawn with a pseudo-element so it never
+     interferes with existing content/overlay elements inside the card */
+  .tilt-3d::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(circle at var(--tilt-shine), rgba(255,255,255,.22), transparent 60%);
+    transition: opacity .4s ease;
+    z-index: 2;
+  }
+  .tilt-3d.is-tilting::after { opacity: 1; }
+  .tilt-3d > * { transform: translateZ(0); }
+}
+
+/* ---- 2) 3D scroll reveal — piggybacks on the existing .reveal / .is-in
+   toggle already driven by js/main.js, so no extra JS/observer is added. ---- */
+.reveal-3d {
+  transform: translateY(26px) rotateX(10deg) scale(.985);
+  transform-origin: 50% 100%;
+}
+.reveal-3d.is-in { transform: translateY(0) rotateX(0deg) scale(1); }
+.reveal-3d-wrap { perspective: 1200px; }
+
+@media (max-width: 700px) {
+  /* keep the 3D tilt visually subtle on small/medium screens where it is still
+     reachable via touch, and skip the rotateX scroll entrance entirely: it costs
+     extra paint on low-end phones for very little visible benefit at that size. */
+  .reveal-3d { transform: translateY(20px); }
+  .reveal-3d.is-in { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-3d, .tilt-3d::after { transition: none !important; transform: none !important; }
+  .reveal-3d, .reveal-3d.is-in { transform: none !important; }
+}
+
+/* ---- 3) Hero 3D depth layers (mouse parallax) ---- */
+@media (hover: hover) and (pointer: fine) {
+  .hero { perspective: 1200px; }
+  .hero-content, .hero-vertical {
+    transform: translate3d(var(--hero-tilt-x, 0px), var(--hero-tilt-y, 0px), 0) translateY(-42%);
+    transition: transform .25s cubic-bezier(.22,.7,.16,1);
+  }
+  .hero-vertical { transform: translate3d(calc(var(--hero-tilt-x, 0px) * -1), calc(var(--hero-tilt-y, 0px) * -1), 0) translateY(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-content, .hero-vertical { transform: none !important; }
+}
+
+/* ---- 4) Scroll-linked 3D depth (desktop/mouse only — e.g. the suite showcase image).
+   Driven by one shared rAF scroll loop in js/cool-3d.js. ---- */
+@media (min-width: 701px) and (hover: hover) and (pointer: fine) {
+  .scroll-depth {
+    transform: perspective(1400px) rotateY(var(--depth-rotate, 0deg)) scale(var(--depth-scale, 1));
+    transition: transform .2s linear;
+  }
+}
+
+/* ---- 4b) Scroll-linked cinematic zoom — works on every device (no 3D, just scale),
+   used on full-bleed photography for a premium "the image breathes as you scroll" feel. ---- */
+.scroll-fade-scale {
+  transform: scale(var(--fade-scale, 1));
+  transition: transform .2s linear;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-depth, .scroll-fade-scale { transform: none !important; transition: none !important; }
+}
+
+/* ---- 5) Cinematic vignette — a soft, static edge-darkening on full-bleed photo
+   sections. Pure CSS, no extra request, no motion: reads as premium depth even
+   with reduced motion on. ---- */
+.cinematic-vignette { position: relative; }
+.cinematic-vignette::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, transparent 48%, rgba(8,10,8,.34) 100%);
+}
+
+/* ---- 6) Section-meta accent line draws in on scroll (piggybacks on the existing
+   .reveal / .is-in toggle, same as .reveal-3d — no extra JS). ---- */
+.section-meta.reveal { position: relative; }
+.section-meta.reveal::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: var(--brass);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .9s cubic-bezier(.22,.7,.16,1) .15s;
+}
+.section-meta.reveal.is-in::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .section-meta.reveal::after { transition: none; transform: scaleX(1); }
+}
+
+/* ---- 7) Lightweight render-cost guard for long below-the-fold sections on mobile ---- */
+@media (max-width: 700px) {
+  .guestbook, .rituals, .architecture-section { content-visibility: auto; contain-intrinsic-size: 1px 900px; }
+}
+
+/* ---- 8) First-paint curtain reveal — a short, tasteful wipe on load instead of the
+   page just popping in. Always clears itself (see js/cool-3d.js): under
+   prefers-reduced-motion it is removed instantly with no animation at all. ---- */
+.curtain-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--forest, #263329);
+  pointer-events: none;
+  transition: opacity .85s cubic-bezier(.22,.7,.16,1), transform .95s cubic-bezier(.22,.7,.16,1);
+  /* CSS-only safety net: even if js/cool-3d.js never runs (blocked, failed, slow
+     connection), this auto-fades the curtain out so the site is never stuck
+     hidden behind it. The JS class below just makes the timing tighter/nicer. */
+  animation: curtainAutoHide 1.9s cubic-bezier(.22,.7,.16,1) .4s forwards;
+}
+.curtain-reveal.is-hidden { opacity: 0; transform: scale(1.03); animation: none; }
+@keyframes curtainAutoHide {
+  0%, 10% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.03); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .curtain-reveal { display: none; }
+}
+
+/* ---- 9) Site-wide film-grain texture — a single tiny inline SVG noise layer,
+   fixed and non-interactive, for a filmic/premium surface instead of flat color.
+   No network request, no animation, so it costs nothing on low-end devices and
+   is unaffected by prefers-reduced-motion. ---- */
+.cool-3d-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  pointer-events: none;
+  opacity: .035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 180px 180px;
+}
+

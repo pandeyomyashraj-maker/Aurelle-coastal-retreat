@@ -1,0 +1,23 @@
+/* Momentum Ring: a compact, photo-led 3D reel tuned to Aurelle's gallery. */
+.momentum-ring-shell{position:absolute;z-index:2;inset:0;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 50% 43%,rgba(213,185,145,.28),rgba(32,43,36,.2) 62%,rgba(14,21,17,.46));}
+.momentum-ring{position:absolute;inset:0;overflow:hidden;perspective:1050px;perspective-origin:50% 44%;touch-action:pan-y;cursor:grab;outline:none;}
+.momentum-ring:focus-visible{box-shadow:inset 0 0 0 2px rgba(241,211,174,.78)}
+.momentum-ring.is-dragging{cursor:grabbing;user-select:none}
+.momentum-ring-world{position:absolute;inset:0;transform-style:preserve-3d;}
+.momentum-card{position:absolute;left:50%;top:44%;width:clamp(170px,23vw,258px);height:clamp(250px,34vw,350px);padding:0;border:1px solid rgba(255,248,233,.72);border-radius:14px;overflow:hidden;background:#d8d0bf;box-shadow:0 18px 45px rgba(7,13,10,.34),0 0 0 1px rgba(255,255,255,.13) inset;transform:translate3d(-50%,-50%,0) rotateY(var(--card-angle)) translateZ(var(--ring-radius)) scale(var(--card-scale));transform-style:preserve-3d;backface-visibility:hidden;opacity:var(--card-opacity);filter:blur(var(--card-blur));transition:transform .56s cubic-bezier(.18,.72,.18,1),opacity .45s ease,filter .44s ease;will-change:transform,filter;cursor:pointer;}
+.momentum-ring.is-dragging .momentum-card{transition:none}
+.momentum-card img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none}
+.momentum-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(17,23,19,.04) 44%,rgba(17,23,19,.24));pointer-events:none}
+.gallery-media > .gallery-image-shade,.gallery-media > #galleryImage,.gallery-media > .gallery-image-caption,.gallery-media > .gallery-image-count{display:none!important}
+.momentum-ring-shell .gallery-location{z-index:5}
+.momentum-ring-caption{position:absolute;z-index:5;left:clamp(18px,4vw,45px);right:clamp(18px,4vw,45px);bottom:54px;display:grid;grid-template-columns:auto 1fr;gap:13px;align-items:end;color:#fff;pointer-events:none;text-shadow:0 2px 12px rgba(0,0,0,.48)}
+.momentum-ring-caption>span{padding-bottom:4px;color:#ead2ae;font:9px var(--mono);letter-spacing:.12em}
+.momentum-ring-caption strong{display:block;font:clamp(18px,2vw,26px)/1.1 var(--serif);font-weight:400}
+.momentum-ring-caption p{margin:5px 0 0;color:rgba(255,255,255,.8);font-size:10px;line-height:1.4}
+.momentum-ring-controls{position:absolute;z-index:6;right:clamp(18px,4vw,45px);bottom:18px;display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.75);font:8px var(--mono);letter-spacing:.1em}
+.momentum-ring-controls button{width:31px;height:31px;border:1px solid rgba(255,255,255,.45);border-radius:50%;background:rgba(22,31,26,.28);color:#fff;font-size:14px;cursor:pointer;transition:background .2s,transform .2s}
+.momentum-ring-controls button:hover{background:rgba(191,151,106,.58);transform:scale(1.06)}
+.momentum-ring-help{position:absolute;z-index:5;left:50%;top:calc(44% + clamp(150px,19vw,205px));transform:translateX(-50%);color:rgba(255,255,255,.62);font:7px var(--mono);letter-spacing:.12em;white-space:nowrap;pointer-events:none}
+.gallery-media.is-changing .momentum-ring-caption{opacity:.76}
+@media(max-width:700px){.momentum-ring{perspective:760px;perspective-origin:50% 40%}.momentum-card{top:42%;width:clamp(145px,42vw,188px);height:clamp(218px,62vw,275px);border-radius:11px}.momentum-ring-caption{bottom:53px;left:17px;right:17px;gap:9px}.momentum-ring-caption>span{font-size:8px}.momentum-ring-caption strong{font-size:19px}.momentum-ring-caption p{font-size:9px}.momentum-ring-controls{right:17px;bottom:12px;gap:8px}.momentum-ring-controls button{width:29px;height:29px}.momentum-ring-help{top:calc(42% + 145px)}}
+@media(prefers-reduced-motion:reduce){.momentum-card,.momentum-ring-controls button{transition:none!important}.momentum-card{filter:none!important;will-change:auto}}

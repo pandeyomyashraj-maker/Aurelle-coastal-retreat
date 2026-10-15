@@ -1,0 +1,120 @@
+/* AURELLE ocean-glass backdrop: translucent forest tint with a quiet, layered sea in the centre. */
+.manifesto.wave-section {
+  background: rgba(24, 52, 53, .48);
+  isolation: isolate;
+}
+.wave-section > .ocean-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 1;
+  background-color: #17474d;
+  background-image: url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=2000&q=78');
+  background-size: cover;
+  background-position: center 54%;
+}
+
+.ocean-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(17, 43, 43, .18) 0%, rgba(19, 57, 62, .22) 42%, rgba(8, 34, 40, .43) 100%),
+    radial-gradient(ellipse at 50% 54%, rgba(83, 139, 140, .12), transparent 58%);
+}
+.ocean-horizon {
+  position: absolute;
+  top: 37%;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  opacity: .66;
+  background: linear-gradient(90deg, transparent, rgba(188, 215, 207, .32) 18%, rgba(188, 215, 207, .56) 50%, rgba(188, 215, 207, .28) 82%, transparent);
+}
+.ocean-water-glimmer {
+  position: absolute;
+  top: 39%;
+  left: -15%;
+  width: 40%;
+  height: 12%;
+  opacity: .24;
+  background: radial-gradient(ellipse at center, rgba(218, 225, 207, .62), rgba(148, 188, 183, .18) 35%, transparent 72%);
+  animation: oceanGlimmer 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.ocean-wave {
+  position: absolute;
+  left: 0;
+  width: 200%;
+  height: 72%;
+  background-repeat: repeat-x;
+  background-size: 50% 100%;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+.ocean-wave-back {
+  top: 14%;
+  opacity: .76;
+  background-image: url('../assets/ocean-wave-back.svg');
+  animation: oceanFlow 56s linear infinite;
+}
+.ocean-wave-middle {
+  top: 21%;
+  height: 68%;
+  opacity: .88;
+  background-image: url('../assets/ocean-wave-middle.svg');
+  animation: oceanFlow 43s linear infinite reverse;
+}
+.ocean-wave-front {
+  top: 29%;
+  height: 62%;
+  opacity: .79;
+  background-image: url('../assets/ocean-wave-front.svg');
+  animation: oceanFlow 34s linear infinite;
+}
+.ocean-surface-lines {
+  position: absolute;
+  left: 0;
+  width: 200%;
+  top: 51%;
+  height: 34%;
+  opacity: .2;
+  background-image: url('../assets/wave-tile.svg');
+  background-size: 480px 120px;
+  background-repeat: repeat-x;
+  mix-blend-mode: screen;
+  will-change: transform;
+  animation: oceanLines 32s linear infinite;
+}
+.wave-section > *:not(.wave-layer):not(.ocean-scene) {
+  position: relative;
+  z-index: 1;
+}
+@keyframes oceanFlow {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes oceanGlimmer {
+  from { transform: translate3d(0, 0, 0) scaleX(.92); }
+  to { transform: translate3d(210%, 8px, 0) scaleX(1.08); }
+}
+@keyframes oceanLines {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@media (max-width: 700px) {
+  .manifesto.wave-section { background: rgba(24, 52, 53, .58); }
+  .ocean-wave { width: 200%; background-size: 50% 100%; }
+  .ocean-wave-back { top: 17%; height: 64%; animation-duration: 72s; }
+  .ocean-wave-middle { top: 25%; height: 58%; animation-duration: 60s; }
+  .ocean-wave-front { top: 35%; height: 48%; animation-duration: 49s; }
+  .ocean-water-glimmer { width: 48%; top: 41%; }
+  .ocean-surface-lines { opacity: .12; background-size: 360px 90px; animation-duration: 42s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ocean-wave, .ocean-water-glimmer, .ocean-surface-lines { animation: none !important; will-change: auto; }
+  .ocean-water-glimmer { transform: translateX(65%); }
+}
+

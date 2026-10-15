@@ -1,0 +1,73 @@
+/* Subtle ambient motion, with pointer effects limited to desktop-class devices. */
+.lenis, .lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+.bokeh-field {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.bokeh-field i {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--size);
+  aspect-ratio: 1;
+  border: 1px solid rgba(232, 211, 177, .16);
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, rgba(255,245,219,.2), rgba(215,190,150,.035) 55%, transparent 74%);
+  box-shadow: 0 0 24px rgba(214,191,154,.08), inset 0 0 18px rgba(255,255,255,.06);
+  opacity: .32;
+  animation: bokehDrift var(--duration) ease-in-out var(--delay) infinite alternate;
+}
+.bokeh-field i:nth-child(1) { --x: 8%; --y: 20%; --size: 54px; --duration: 9s; --delay: -3s; }
+.bokeh-field i:nth-child(2) { --x: 82%; --y: 14%; --size: 34px; --duration: 12s; --delay: -7s; }
+.bokeh-field i:nth-child(3) { --x: 91%; --y: 57%; --size: 64px; --duration: 11s; --delay: -2s; }
+.bokeh-field i:nth-child(4) { --x: 12%; --y: 72%; --size: 28px; --duration: 8s; --delay: -5s; }
+.bokeh-field i:nth-child(5) { --x: 64%; --y: 86%; --size: 46px; --duration: 13s; --delay: -9s; }
+.bokeh-field i:nth-child(6) { --x: 42%; --y: 34%; --size: 22px; --duration: 10s; --delay: -4s; }
+.bokeh-field i:nth-child(7) { --x: 27%; --y: 92%; --size: 38px; --duration: 14s; --delay: -6s; }
+.bokeh-field i:nth-child(8) { --x: 72%; --y: 43%; --size: 25px; --duration: 9s; --delay: -1s; }
+@keyframes bokehDrift {
+  from { transform: translate3d(0, 0, 0) scale(.88); opacity: .2; }
+  to { transform: translate3d(10px, -16px, 0) scale(1.06); opacity: .42; }
+}
+
+.cursor-spotlight {
+  position: fixed;
+  z-index: 299;
+  top: 0;
+  left: 0;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle, rgba(233,211,172,.105) 0%, rgba(233,211,172,.045) 25%, transparent 68%);
+  transition: opacity 260ms ease;
+  will-change: transform;
+}
+.cursor-spotlight.is-active { opacity: 1; }
+
+[data-magnetic] {
+  transform: translate3d(var(--magnetic-x, 0px), var(--magnetic-y, 0px), 0);
+  transition: transform 260ms cubic-bezier(.2,.75,.18,1);
+  will-change: transform;
+}
+
+@media (max-width: 700px), (hover: none), (pointer: coarse) {
+  .bokeh-field i:nth-child(n+5) { display: none; }
+  .bokeh-field i { opacity: .2; animation-duration: 16s; }
+  .cursor-spotlight { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bokeh-field { display: none; }
+  .cursor-spotlight { display: none; }
+  [data-magnetic] { transform: none !important; transition: none !important; }
+}
+

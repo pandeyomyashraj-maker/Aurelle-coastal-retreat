@@ -1,0 +1,191 @@
+/* AURELLE full-site ocean-sunset video backdrop. The Pexels video streams remotely. */
+html { background: #263329; }
+body.has-site-video-background {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+.site-ocean-video {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center 52%;
+  pointer-events: none;
+  background: #263329;
+}
+.site-video-shade {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(17, 29, 28, .43) 0%,
+    rgba(237, 233, 223, .42) 18%,
+    rgba(237, 233, 223, .57) 47%,
+    rgba(237, 233, 223, .40) 72%,
+    rgba(16, 29, 27, .54) 100%);
+}
+/* Let the moving ocean show through the whole page without sacrificing text contrast. */
+.hero { background: transparent; }
+.hero-image { opacity: 0 !important; }
+.intro, .suite-section, .essentials, .architecture-section,
+.location-section, .enquire, .guestbook, .stay-composer, .rituals {
+  background-color: rgba(237, 233, 223, .78) !important;
+  backdrop-filter: blur(2px);
+}
+.manifesto.wave-section {
+  background: rgba(24, 52, 53, .48) !important;
+}
+.manifesto.wave-section .ocean-scene {
+  background-color: transparent;
+  background-image: none;
+}
+.experience-gallery, .security-experience, .site-footer {
+  background-color: rgba(32, 42, 34, .86) !important;
+  backdrop-filter: blur(3px);
+}
+.stay-form, .form-success, .review-card, .composer-plan {
+  background-color: rgba(240, 236, 227, .91);
+}
+.site-header.is-scrolled { background: rgba(237, 233, 223, .86); }
+.mobile-menu { background: rgba(38, 51, 41, .96); }
+@media (max-width: 700px) {
+  .site-ocean-video { object-position: center center; }
+  .site-video-shade { background: linear-gradient(180deg, rgba(17,29,28,.5), rgba(237,233,223,.57) 25%, rgba(237,233,223,.61) 65%, rgba(16,29,27,.58)); }
+  .intro, .suite-section, .essentials, .architecture-section,
+  .location-section, .enquire, .guestbook, .stay-composer, .rituals {
+    background-color: rgba(237, 233, 223, .86) !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-ocean-video { display: none; }
+  .site-video-shade { background: #ede9df; }
+}
+
+
+/* Manifesto: let the real sunset video show through a quiet glass panel.
+   The decorative SVG/CSS wave layers are intentionally removed from this section. */
+.manifesto.wave-section {
+  position: relative;
+  isolation: isolate;
+  background: rgba(22, 34, 31, .22) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(118%);
+  backdrop-filter: blur(14px) saturate(118%);
+  border-top: 1px solid rgba(255, 255, 255, .24);
+  border-bottom: 1px solid rgba(255, 255, 255, .18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+.manifesto.wave-section .ocean-scene,
+.manifesto.wave-section .wave-layer,
+.manifesto.wave-section::before,
+.manifesto.wave-section::after {
+  display: none !important;
+  animation: none !important;
+}
+.manifesto.wave-section .manifesto-mark svg {
+  stroke: rgba(244, 225, 190, .88);
+}
+.manifesto.wave-section .manifesto-text {
+  color: rgba(255, 251, 242, .98);
+  text-shadow: 0 2px 22px rgba(7, 19, 18, .22);
+}
+.manifesto.wave-section .manifesto-text em {
+  color: #f0d4a7;
+}
+.manifesto.wave-section .underlined:after {
+  border-color: rgba(240, 212, 167, .9);
+}
+.manifesto.wave-section .manifesto-note {
+  color: rgba(255, 249, 235, .72);
+}
+@media (max-width: 700px) {
+  .manifesto.wave-section {
+    background: rgba(22, 34, 31, .28) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(115%);
+    backdrop-filter: blur(10px) saturate(115%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .manifesto.wave-section { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+
+/* AURELLE final polish — layout, legibility, and compositor-friendly motion. */
+.brand { gap: 11px; min-width: 0; }
+.brand-mark-wrap { display: inline-flex; flex: 0 0 auto; width: 38px; height: 38px; align-items: center; justify-content: center; }
+.brand-mark { display: block; width: 100%; height: 100%; object-fit: contain; }
+.site-footer .brand-mark-wrap { width: 40px; height: 40px; }
+.brand-word { white-space: nowrap; }
+.site-ocean-poster {
+  position: fixed; inset: 0; z-index: -3; display: block; width: 100%; height: 100%;
+  overflow: hidden; pointer-events: none; background: #263329;
+}
+.site-ocean-poster img { display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center 56%; }
+.site-ocean-video { transform: translateZ(0); backface-visibility: hidden; contain: paint; opacity: 0; transition: opacity 1.1s ease; }
+.site-video-playing .site-ocean-video { opacity: 1; }
+.site-video-still .site-ocean-video { opacity: 0; }
+/* The moving image remains clear behind the design, but wide sections use alpha fills instead of blur filters. */
+.intro, .suite-section, .essentials, .architecture-section,
+.location-section, .enquire, .guestbook, .stay-composer, .rituals,
+.experience-gallery, .security-experience, .site-footer {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.site-header.is-scrolled { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.manifesto.wave-section { -webkit-backdrop-filter: blur(12px) saturate(112%); backdrop-filter: blur(12px) saturate(112%); }
+/* High-density screens keep full-bleed photos sharp without forcing 4K downloads on phones. */
+img { image-rendering: auto; }
+.hero { min-height: min(760px, 100svh); background: transparent; }
+.hero-shade { pointer-events: none; }
+.hero-content { max-width: min(760px, calc(100vw - var(--gutter) * 2)); }
+:where(a, button, input, select, textarea) { -webkit-tap-highlight-color: transparent; }
+button, input, select, textarea { max-width: 100%; }
+img, video { max-width: 100%; }
+@media (min-width: 1800px) {
+  :root { --gutter: clamp(86px, 5.2vw, 150px); --section: clamp(164px, 8vw, 210px); }
+  .hero h1 { font-size: clamp(150px, 7.5vw, 196px); }
+  .hero-content { max-width: 920px; }
+  .section-meta { font-size: 10px; }
+  .intro-aside, .suite-heading > p, .rituals-head > p, .guestbook-intro { max-width: 470px; }
+  .suite-showcase, .intro-grid, .ritual-grid, .reviews-grid, .composer-shell { max-width: 2200px; margin-left: auto; margin-right: auto; }
+}
+@media (max-width: 1000px) {
+  .brand-mark-wrap { width: 35px; height: 35px; }
+  .brand-word { letter-spacing: .16em; }
+  .site-video-shade { background: linear-gradient(180deg, rgba(17,29,28,.48), rgba(237,233,223,.50) 24%, rgba(237,233,223,.61) 66%, rgba(16,29,27,.54)); }
+}
+@media (max-width: 700px) {
+  .brand-mark-wrap { width: 31px; height: 31px; }
+  .brand-word { font-size: 11px; letter-spacing: .16em; }
+  .brand-word span { letter-spacing: .11em; }
+  /* The source is a high-bitrate 4K/60fps vertical clip. Use its still poster on phones. */
+  .site-ocean-video { display: block; }
+  .site-video-shade { background: linear-gradient(180deg, rgba(17,29,28,.53), rgba(237,233,223,.55) 24%, rgba(237,233,223,.67) 66%, rgba(16,29,27,.61)); }
+  .manifesto.wave-section { -webkit-backdrop-filter: blur(8px) saturate(108%); backdrop-filter: blur(8px) saturate(108%); }
+  .site-header.is-scrolled { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .section-pad { padding-top: clamp(66px, 17vw, 86px); padding-bottom: clamp(66px, 17vw, 86px); }
+  .hero { min-height: 640px; }
+  .mobile-menu { padding-bottom: max(25px, env(safe-area-inset-bottom)); }
+}
+@media (max-width: 380px) {
+  .brand-mark-wrap { width: 28px; height: 28px; }
+  .brand { gap: 7px; }
+  .brand-word { font-size: 10px; letter-spacing: .13em; }
+  .brand-word span { font-size: 6.5px; letter-spacing: .08em; }
+  .hero h1 { font-size: clamp(49px, 14vw, 54px); }
+  .hero-content { top: 52%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  .site-ocean-video { display: none !important; }
+  .site-video-shade { background: linear-gradient(180deg, rgba(17,29,28,.52), rgba(237,233,223,.55) 24%, rgba(237,233,223,.66) 66%, rgba(16,29,27,.60)) !important; }
+  .manifesto.wave-section { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .brand-mark-wrap, .brand-mark, .site-header, .hero *, .intro-image-wrap img,
+  .suite-image-frame img, .ritual-photo img, .architecture-image img { animation: none !important; transition: none !important; }
+}
+

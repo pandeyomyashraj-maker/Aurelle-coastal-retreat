@@ -1,0 +1,16 @@
+/* Contrast and motion refinements from the final desktop/mobile review. */
+.location-section,.location-content{background:#263329!important;color:#ede9df}
+.location-content .section-meta{color:#ded8c9;border-color:rgba(237,233,223,.3)}
+.location-content .location-text{color:rgba(237,233,223,.86)}
+.location-content .coordinates{color:#ead6b2;border-color:rgba(237,233,223,.3)}
+.security-note{color:#d9d8ce!important}
+.mood-choice.is-active>span{color:#58462f!important}
+.concept-note,.composer-disclaimer,.mood-choice{color:#41443c!important}
+.mood-choice>span{color:#41443c!important}
+.security-note{color:#e4e2d8!important}
+.rose-cursor{background:radial-gradient(circle at 32% 28%,#b56d7d,#704459 76%)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;mix-blend-mode:normal!important;box-shadow:0 8px 24px rgba(18,14,20,.28),inset 0 0 0 3px rgba(255,225,220,.12)}
+.momentum-card{transition:transform .32s cubic-bezier(.18,.72,.18,1),opacity .24s ease,filter .18s ease}
+.scroll-fade-scale{transition:none!important}
+.gallery-copy-main,.gallery-copy-main.is-changing{transition:none!important;opacity:1;transform:none}
+@media(max-width:700px){.location-content{padding:56px var(--gutter) max(72px,env(safe-area-inset-bottom))!important}.momentum-card{transition:transform .26s cubic-bezier(.18,.72,.18,1),opacity .2s ease,filter .16s ease}}
+@media(prefers-reduced-motion:reduce){.momentum-card{transition:none!important}}
