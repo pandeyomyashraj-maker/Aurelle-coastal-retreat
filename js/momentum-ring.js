@@ -22,7 +22,7 @@
       if(!entries[0].isIntersecting)return;
       cards.forEach(card=>{const image=card.querySelector('img');if(image){image.loading='eager';image.decode?.().catch(()=>{});}});
       imageWarmup.disconnect();
-    },{rootMargin:'1400px 0px'});
+    },{rootMargin:'420px 0px'});
     imageWarmup.observe(ring);
   }
   const step=360/items.length;
