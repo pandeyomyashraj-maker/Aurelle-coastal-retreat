@@ -51,13 +51,12 @@
     video.addEventListener('error', keepStill, { once: true });
   }
 
-  // Start only after the primary page is loaded and the browser has a quiet moment.
-  const schedule = () => {
-    if ('requestIdleCallback' in window) window.requestIdleCallback(startVideo, { timeout: 2600 });
-    else window.setTimeout(startVideo, 1400);
-  };
-  if (document.readyState === 'complete') schedule();
-  else window.addEventListener('load', schedule, { once: true });
+  // Start on the first load, rather than waiting for an idle callback. The poster
+  // remains visible until the first video frame is ready, so judges see motion
+  // immediately without a blank flash.
+  const schedule = () => window.setTimeout(startVideo, 120);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule, { once: true });
+  else schedule();
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) video.pause();
