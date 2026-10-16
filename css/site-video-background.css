@@ -163,11 +163,12 @@ img, video { max-width: 100%; }
   .brand-mark-wrap { width: 31px; height: 31px; }
   .brand-word { font-size: 11px; letter-spacing: .16em; }
   .brand-word span { letter-spacing: .11em; }
-  /* The source is a high-bitrate 4K/60fps vertical clip. Use its still poster on phones. */
-  .site-ocean-video { display: block; }
+  /* Keep the water-sunset poster on phones; avoid downloading the 4K/60fps clip. */
+  .site-ocean-video { display: none !important; }
   .site-video-shade { background: linear-gradient(180deg, rgba(17,29,28,.53), rgba(237,233,223,.55) 24%, rgba(237,233,223,.67) 66%, rgba(16,29,27,.61)); }
-  .manifesto.wave-section { -webkit-backdrop-filter: blur(8px) saturate(108%); backdrop-filter: blur(8px) saturate(108%); }
-  .site-header.is-scrolled { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .manifesto.wave-section { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .site-header.is-scrolled { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .film-flare, .cursor-spotlight, .cool-3d-grain { display: none !important; }
   .section-pad { padding-top: clamp(66px, 17vw, 86px); padding-bottom: clamp(66px, 17vw, 86px); }
   .hero { min-height: 640px; }
   .mobile-menu { padding-bottom: max(25px, env(safe-area-inset-bottom)); }

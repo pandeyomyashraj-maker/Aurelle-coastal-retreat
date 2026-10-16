@@ -4,7 +4,8 @@
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   // Keep native touch scrolling; use Lenis inertia for desktop wheel and keyboard scrolling.
-  if (!reduceMotion && finePointer && typeof window.Lenis === 'function') {
+  function initializeLenis() {
+    if (reduceMotion || !finePointer || typeof window.Lenis !== 'function') return;
     const lenis = new window.Lenis({
       autoRaf: false,
       smoothWheel: true,
@@ -36,6 +37,15 @@
     document.addEventListener('click', event => {
       if (event.target.closest?.('a[href^=\"#\"]')) wakeLenis();
     }, { passive: true });
+  }
+
+  // Lenis only helps mouse/trackpad users. Keep its 18 KB library off phones.
+  if (!reduceMotion && finePointer) {
+    const script = document.createElement('script');
+    script.src = 'js/vendor/lenis.min.js';
+    script.onload = initializeLenis;
+    script.async = true;
+    document.head.appendChild(script);
   }
 
   // A quiet, fixed light source follows mouse input only; it never intercepts clicks.
