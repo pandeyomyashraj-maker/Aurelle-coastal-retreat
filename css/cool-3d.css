@@ -77,7 +77,6 @@
 @media (min-width: 701px) and (hover: hover) and (pointer: fine) {
   .scroll-depth {
     transform: perspective(1400px) rotateY(var(--depth-rotate, 0deg)) scale(var(--depth-scale, 1));
-    transition: transform .2s linear;
   }
 }
 
@@ -85,9 +84,9 @@
    used on full-bleed photography for a premium "the image breathes as you scroll" feel. ---- */
 .scroll-fade-scale {
   transform: scale(var(--fade-scale, 1));
-  transition: transform .2s linear;
-  will-change: transform;
 }
+.scroll-fade-scale.is-motion-visible,
+.scroll-depth.is-motion-visible { will-change: transform; }
 @media (prefers-reduced-motion: reduce) {
   .scroll-depth, .scroll-fade-scale { transform: none !important; transition: none !important; }
 }

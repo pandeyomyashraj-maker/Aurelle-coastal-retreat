@@ -6,7 +6,7 @@
   // Keep native touch scrolling; use Lenis inertia for desktop wheel and keyboard scrolling.
   if (!reduceMotion && finePointer && typeof window.Lenis === 'function') {
     const lenis = new window.Lenis({
-      autoRaf: true,
+      autoRaf: false,
       smoothWheel: true,
       syncTouch: false,
       lerp: 0.16,
@@ -15,6 +15,27 @@
       stopInertiaOnNavigate: true
     });
     window.aurelleLenis = lenis;
+    let lenisFrame = 0;
+    const wakeLenis = () => {
+      if (lenisFrame) return;
+      const tick = time => {
+        lenisFrame = 0;
+        lenis.raf(time);
+        if (lenis.isScrolling === 'smooth' && !lenisFrame) lenisFrame = requestAnimationFrame(tick);
+      };
+      lenisFrame = requestAnimationFrame(tick);
+    };
+    lenis.on('scroll', () => {
+      if (lenis.isScrolling === 'smooth') wakeLenis();
+    });
+    window.addEventListener('wheel', wakeLenis, { passive: true });
+    window.addEventListener('touchmove', wakeLenis, { passive: true });
+    window.addEventListener('keydown', event => {
+      if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) wakeLenis();
+    }, { passive: true });
+    document.addEventListener('click', event => {
+      if (event.target.closest?.('a[href^=\"#\"]')) wakeLenis();
+    }, { passive: true });
   }
 
   // A quiet, fixed light source follows mouse input only; it never intercepts clicks.

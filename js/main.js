@@ -10,21 +10,20 @@
   };
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Header state and scroll progress are passive and don't block the main thread.
+  // Header and progress share one read/write-batched scroll frame.
   const header = $('.site-header');
   const progress = $('#progressBar');
-  let ticking = false;
-  function updateScrollState() {
-    const y = window.scrollY || 0;
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    header?.classList.toggle('is-scrolled', y > 26);
-    if (progress) progress.style.width = `${max > 0 ? (y / max) * 100 : 0}%`;
-    ticking = false;
-  }
-  window.addEventListener('scroll', () => {
-    if (!ticking) { requestAnimationFrame(updateScrollState); ticking = true; }
-  }, { passive: true });
-  updateScrollState();
+  window.aurelleScroll?.subscribe(
+    () => {
+      const y = window.scrollY || 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      return { scrolled: y > 26, progress: max > 0 ? (y / max) * 100 : 0 };
+    },
+    state => {
+      header?.classList.toggle('is-scrolled', state.scrolled);
+      if (progress) progress.style.transform = 'scaleX(' + (state.progress / 100) + ')';
+    }
+  );
 
   // Reveal sections only once. Reduced-motion users see the final state immediately.
   const reveals = $$('.reveal');
@@ -173,56 +172,6 @@
     window.setTimeout(() => textarea?.focus({ preventScroll: true }), reduceMotion ? 0 : 500);
   });
 
-  // Date defaults are convenient but still editable by the visitor.
-  const today = new Date();
-  const toDateInput = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-  const arrival = $('#arrival');
-  const departure = $('#departure');
-  if (arrival && departure) {
-    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 21);
-    const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 3);
-    arrival.min = toDateInput(today);
-    arrival.value = toDateInput(start);
-    departure.min = toDateInput(new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1));
-    departure.value = toDateInput(end);
-    arrival.addEventListener('change', () => {
-      if (!arrival.value) return;
-      const nextDay = new Date(`${arrival.value}T12:00:00`);
-      nextDay.setDate(nextDay.getDate() + 1);
-      departure.min = toDateInput(nextDay);
-      if (!departure.value || departure.value <= arrival.value) departure.value = toDateInput(nextDay);
-    });
-  }
-
-  const form = $('#stayForm');
-  const formError = $('#formError');
-  const formSuccess = $('#formSuccess');
-  form?.addEventListener('submit', e => {
-    e.preventDefault();
-    formError.hidden = true;
-    const name = $('#guestName').value.trim();
-    const email = $('#guestEmail').value.trim();
-    if (!arrival.value || !departure.value) return showError('Choose both arrival and departure dates.');
-    if (departure.value <= arrival.value) return showError('Departure must be later than arrival.');
-    if (name.length < 2) return showError('Please enter a name with at least two characters.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError('Please enter a valid email address.');
-    formSuccess.hidden = false;
-  });
-  function showError(message) {
-    formError.textContent = message;
-    formError.hidden = false;
-    formError.focus?.();
-  }
-  $('#resetForm')?.addEventListener('click', () => {
-    formSuccess.hidden = true;
-    form.reset();
-    if (arrival && departure) {
-      arrival.value = toDateInput(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 21));
-      departure.value = toDateInput(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 24));
-    }
-    $('#guestName').focus();
-  });
-
   // Cursor aura appears only on capable mouse devices and only over interactive imagery.
   const aura = $('#cursorAura');
   const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -243,20 +192,20 @@
   // Small parallax on large images only. Disabled on touch and reduced-motion devices.
   if (canHover && !reduceMotion) {
     const parallaxImages = $$('.intro-image-wrap img, .location-image img, .full-image-section > img');
-    let py = 0, pFrame = 0;
-    window.addEventListener('scroll', () => {
-      if (pFrame) return;
-      pFrame = requestAnimationFrame(() => {
-        const vh = window.innerHeight;
-        parallaxImages.forEach(img => {
+    window.aurelleScroll?.subscribe(
+      () => {
+        const vh = window.innerHeight || 1;
+        return parallaxImages.map(img => {
           const rect = img.parentElement.getBoundingClientRect();
-          if (rect.bottom < 0 || rect.top > vh) return;
+          if (rect.bottom < 0 || rect.top > vh) return null;
           const shift = ((rect.top + rect.height / 2 - vh / 2) / vh) * -9;
-          img.style.transform = `scale(1.035) translate3d(0, ${shift}px, 0)`;
+          return { img, shift };
         });
-        pFrame = 0;
-      });
-    }, { passive: true });
+      },
+      values => values.forEach(value => {
+        if (value) value.img.style.transform = 'scale(1.035) translate3d(0, ' + value.shift + 'px, 0)';
+      })
+    );
   }
 
 
@@ -268,6 +217,7 @@
     let heroMouseY = 0;
     let heroScrollY = 0;
     let heroFrame = 0;
+    let heroBounds = heroSection.getBoundingClientRect();
     const renderHeroShift = () => {
       heroImage.style.setProperty('--hero-shift-x', `${heroMouseX}px`);
       heroImage.style.setProperty('--hero-shift-y', `${heroMouseY + heroScrollY}px`);
@@ -277,9 +227,8 @@
       if (!heroFrame) heroFrame = requestAnimationFrame(renderHeroShift);
     };
     heroSection.addEventListener('pointermove', event => {
-      const rect = heroSection.getBoundingClientRect();
-      const nx = (event.clientX - rect.left) / Math.max(1, rect.width) - 0.5;
-      const ny = (event.clientY - rect.top) / Math.max(1, rect.height) - 0.5;
+      const nx = (event.clientX - heroBounds.left) / Math.max(1, heroBounds.width) - 0.5;
+      const ny = (event.clientY - heroBounds.top) / Math.max(1, heroBounds.height) - 0.5;
       heroMouseX = nx * -10;
       heroMouseY = ny * -7;
       queueHeroShift();
@@ -289,12 +238,15 @@
       heroMouseY = 0;
       queueHeroShift();
     }, { passive: true });
-    window.addEventListener('scroll', () => {
-      const rect = heroSection.getBoundingClientRect();
-      const progress = Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height)));
-      heroScrollY = progress * -18;
-      queueHeroShift();
-    }, { passive: true });
+    window.aurelleScroll?.subscribe(
+      () => heroSection.getBoundingClientRect(),
+      rect => {
+        heroBounds = rect;
+        const heroProgress = Math.max(0, Math.min(1, -rect.top / Math.max(1, rect.height)));
+        heroScrollY = heroProgress * -18;
+        queueHeroShift();
+      }
+    );
   }
 
   // Editorial split gallery: every image, title, kicker, and caption moves as one story.
@@ -306,7 +258,6 @@
     { image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1000&q=70', alt: 'A resort pool framed by architecture and landscape', count: '05', caption: 'Let the light do the talking.', kicker: 'WATER & STILLNESS', title: 'The quiet<br/><em>blue.</em>', desc: 'Reflections shift with the hour. There is no schedule here, only water, warmth, and the changing colour of the day.' }
   ];
   let activeGallery = 0;
-  let galleryScrollFrame = 0;
   const gallerySection = $('#gallery');
   function setGallery(index) {
     index = Math.max(0, Math.min(galleryStories.length - 1, index));
@@ -330,22 +281,24 @@
 
   // Scroll drives the pinned five-scene journal. Arrow buttons are intentionally removed:
   // each story advances naturally as the visitor moves down the page.
-  function updateGalleryFromScroll() {
-    if (galleryScrollFrame || !gallerySection) return;
-    galleryScrollFrame = window.requestAnimationFrame(() => {
-      galleryScrollFrame = 0;
+  if (gallerySection) {
+    window.aurelleScroll?.subscribe(
+      () => {
       const rect = gallerySection.getBoundingClientRect();
       const travel = Math.max(1, gallerySection.offsetHeight - window.innerHeight);
-      const progress = Math.max(0, Math.min(0.99999, -rect.top / travel));
-      const index = Math.min(galleryStories.length - 1, Math.floor(progress * galleryStories.length));
-      const fill = $('#galleryScrollProgress');
-      if (fill) fill.style.width = `${Math.min(100, progress * 100)}%`;
-      if (index !== activeGallery) setGallery(index);
-    });
+        const progressValue = Math.max(0, Math.min(0.99999, -rect.top / travel));
+        return {
+          progress: progressValue,
+          index: Math.min(galleryStories.length - 1, Math.floor(progressValue * galleryStories.length))
+        };
+      },
+      state => {
+        const fill = $('#galleryScrollProgress');
+        if (fill) fill.style.transform = 'scaleX(' + Math.min(1, state.progress) + ')';
+        if (state.index !== activeGallery) setGallery(state.index);
+      }
+    );
   }
-  window.addEventListener('scroll', updateGalleryFromScroll, { passive: true });
-  window.addEventListener('resize', updateGalleryFromScroll, { passive: true });
-  updateGalleryFromScroll();
 
   // Global click feedback: two soft rings and a warm point, never a strobe or blocking overlay.
   const pulse = $('#interactionPulse');

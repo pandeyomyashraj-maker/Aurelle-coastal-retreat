@@ -27,28 +27,43 @@
   if (reduceMotion) return; // accessibility: skip all other JS-driven motion entirely
 
   const canHoverFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const lowMotion = document.documentElement.dataset.liteMotion === 'true' || window.matchMedia('(max-width: 700px)').matches;
 
-  /* ---- 3) Scroll-linked cinematic zoom (.scroll-fade-scale) — runs on every device,
-     touch included, since it's just an opacity-free scale and is cheap even on
-     low-end phones. One shared rAF-throttled scroll listener for every tracked element. ---- */
-  const fadeEls = document.querySelectorAll('.scroll-fade-scale');
-  if (fadeEls.length) {
-    let fadeTicking = false;
-    const updateFade = () => {
-      fadeTicking = false;
-      const vh = window.innerHeight || 1;
-      fadeEls.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        if (rect.bottom < 0 || rect.top > vh) return; // off-screen: skip the write
-        const center = rect.top + rect.height / 2;
-        const progress = Math.max(-1, Math.min(1, (center - vh / 2) / (vh / 2)));
-        el.style.setProperty('--fade-scale', (1.07 - Math.abs(progress) * 0.07).toFixed(3));
-      });
-    };
-    window.addEventListener('scroll', () => {
-      if (!fadeTicking) { fadeTicking = true; requestAnimationFrame(updateFade); }
-    }, { passive: true });
-    updateFade();
+  /* ---- 3/4) Scroll effects share a single rAF scheduler. Read geometry first,
+     then write transforms. Touch and save-data devices keep the still image. ---- */
+  const fadeEls = lowMotion ? [] : [...document.querySelectorAll('.scroll-fade-scale')];
+  const depthEls = !lowMotion && canHoverFine && window.innerWidth > 700
+    ? [...document.querySelectorAll('.scroll-depth')]
+    : [];
+  const scrollEls = [...new Set([...fadeEls, ...depthEls])];
+  if (scrollEls.length && 'IntersectionObserver' in window) {
+    const visibility = new IntersectionObserver(entries => {
+      entries.forEach(entry => entry.target.classList.toggle('is-motion-visible', entry.isIntersecting));
+    }, { rootMargin: '120px 0px' });
+    scrollEls.forEach(el => visibility.observe(el));
+  }
+  if (scrollEls.length && window.aurelleScroll) {
+    window.aurelleScroll.subscribe(
+      () => {
+        const vh = window.innerHeight || 1;
+        const read = elements => elements.filter(el => el.classList.contains('is-motion-visible')).map(el => {
+          const rect = el.getBoundingClientRect();
+          const center = rect.top + rect.height / 2;
+          const progress = Math.max(-1, Math.min(1, (center - vh / 2) / (vh / 2)));
+          return { el, progress };
+        });
+        return { fades: read(fadeEls), depths: read(depthEls) };
+      },
+      state => {
+        state.fades.forEach(({ el, progress }) => {
+          el.style.setProperty('--fade-scale', (1.07 - Math.abs(progress) * 0.07).toFixed(3));
+        });
+        state.depths.forEach(({ el, progress }) => {
+          el.style.setProperty('--depth-rotate', (progress * -6).toFixed(2) + 'deg');
+          el.style.setProperty('--depth-scale', (1 - Math.abs(progress) * 0.03).toFixed(3));
+        });
+      }
+    );
   }
 
   if (!canHoverFine) return; // the rest (tilt, hero parallax, 3D rotateY depth) is mouse/desktop only
@@ -105,26 +120,5 @@
     });
   }
 
-  /* ---- 4) Scroll-linked 3D rotate on every .scroll-depth element (desktop/mouse only) ---- */
-  const depthEls = document.querySelectorAll('.scroll-depth');
-  if (depthEls.length && window.innerWidth > 700) {
-    let depthTicking = false;
-    const updateDepth = () => {
-      depthTicking = false;
-      const vh = window.innerHeight || 1;
-      depthEls.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        if (rect.bottom < 0 || rect.top > vh) return;
-        const center = rect.top + rect.height / 2;
-        const progress = Math.max(-1, Math.min(1, (center - vh / 2) / (vh / 2)));
-        el.style.setProperty('--depth-rotate', (progress * -6).toFixed(2) + 'deg');
-        el.style.setProperty('--depth-scale', (1 - Math.abs(progress) * 0.03).toFixed(3));
-      });
-    };
-    window.addEventListener('scroll', () => {
-      if (!depthTicking) { depthTicking = true; requestAnimationFrame(updateDepth); }
-    }, { passive: true });
-    updateDepth();
-  }
 })();
 

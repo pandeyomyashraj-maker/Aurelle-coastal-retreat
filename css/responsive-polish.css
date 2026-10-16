@@ -14,3 +14,12 @@
 .gallery-copy-main,.gallery-copy-main.is-changing{transition:none!important;opacity:1;transform:none}
 @media(max-width:700px){.location-content{padding:56px var(--gutter) max(72px,env(safe-area-inset-bottom))!important}.momentum-card{transition:transform .26s cubic-bezier(.18,.72,.18,1),opacity .2s ease,filter .16s ease}}
 @media(prefers-reduced-motion:reduce){.momentum-card{transition:none!important}}
+
+/* Keep the hero and first viewport immediate; defer layout/paint for long mobile sections. */
+@media(max-width:700px){
+  .intro,.manifesto,.suite-section,.essentials,.security-experience,.rituals,
+  .stay-composer,.location-section,.guestbook,.enquire,.site-footer{
+    content-visibility:auto;
+    contain-intrinsic-size:700px;
+  }
+}

@@ -47,10 +47,11 @@
     });
   }
   if ('IntersectionObserver' in window && chapters.length) {
-    const chapterObserver = new IntersectionObserver(() => {
+    const chapterObserver = new IntersectionObserver(entries => {
       const center = window.innerHeight * 0.5;
-      const candidates = chapters.map(section => {
-        const rect = section.getBoundingClientRect();
+      const candidates = entries.filter(entry => entry.isIntersecting).map(entry => {
+        const section = entry.target;
+        const rect = entry.boundingClientRect;
         const overlapsCenter = rect.top <= center && rect.bottom >= center;
         return { section, rect, overlapsCenter, distance: Math.abs((rect.top + rect.bottom) / 2 - center) };
       }).filter(item => item.overlapsCenter).sort((a, b) => a.distance - b.distance);
